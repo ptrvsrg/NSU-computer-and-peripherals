@@ -1,0 +1,60 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "CMake Release prebuild",
+			"type": "shell",
+			"hide": true,
+			"command": "cmake",
+			"args": [
+				"-Bbuild",
+				"-DCMAKE_BUILD_TYPE=Release"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"presentation": {
+				"group": "CMake build",
+				"showReuseMessage": false
+			}
+		},
+		{
+			"label": "CMake Release build",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"build"
+			],
+			"group": "build",
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"presentation": {
+				"group": "CMake build",
+			},
+			"dependsOrder": "sequence",
+			"dependsOn":["CMake Release prebuild"],
+		},
+		{
+			"label": "CMake Release build for launch",
+			"type": "shell",
+			"hide": true,
+			"command": "cmake",
+			"args": [
+				"--build",
+				"build"
+			],
+			"group": "build",
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"dependsOrder": "sequence",
+			"dependsOn":["CMake Release prebuild"],
+			"presentation": {
+				"group": "CMake build",
+				"close": true
+			}
+		}
+	]
+}
