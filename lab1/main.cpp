@@ -12,15 +12,15 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     
-    long long N = atoll(argv[1]);
+    long long count = atoll(argv[1]);
 
-    if (N < 0)
+    if (count < 0)
     {
         cerr << "Wrong point count\n";
         return EXIT_FAILURE;
     }
 
-    cout << MonteCarloAlgorithm(N) << "\n";
+    cout << MonteCarloAlgorithm(count) << "\n";
 
     return EXIT_SUCCESS;
 }
