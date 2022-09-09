@@ -1,7 +1,6 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
-#include <iostream>
 #include <cstdlib>
 #include <ctime>
 
