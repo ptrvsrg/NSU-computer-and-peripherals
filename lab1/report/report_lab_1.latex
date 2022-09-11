@@ -1,0 +1,755 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\author{}
+\date{}
+
+\begin{document}
+
+\textbf{МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ\\
+РОССИЙСКОЙ ФЕДЕРАЦИИ}
+
+\textbf{ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ ОБРАЗОВАТЕЛЬНОЕ
+УЧРЕЖДЕНИЕ ВЫСШЕГО ОБРАЗОВАНИЯ}
+
+\textbf{НОВОСИБИРСКИЙ НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ ГОСУДАРСТВЕННЫЙ
+УНИВЕРСИТЕТ}
+
+\textbf{Факультет информационных технологий}
+
+\textbf{Кафедра параллельных вычислений}
+
+\textbf{ОТЧЕТ}
+
+\textbf{О ВЫПОЛНЕНИИ ЛАБОРАТОРНОЙ РАБОТЫ}
+
+«Определение времени работы прикладных программ»
+
+Студента 2 курса, 21211 группы
+
+\textbf{Петрова Сергея Евгеньевича}
+
+Направление 09.03.01 -- «Информатика и вычислительная техника»
+
+\begin{quote}
+Преподаватель:
+
+Антон Юрьевич Кудинов
+\end{quote}
+
+Новосибирск 2022
+
+Содержание
+
+\protect\hyperlink{ux441ux43eux434ux435ux440ux436ux430ux43dux438ux435}{Содержание
+2}
+
+\protect\hyperlink{ux446ux435ux43bux44c}{ЦЕЛЬ 3}
+
+\protect\hyperlink{ux437ux430ux434ux430ux43dux438ux435}{ЗАДАНИЕ 3}
+
+\protect\hyperlink{ux43eux43fux438ux441ux430ux43dux438ux435-ux440ux430ux431ux43eux442ux44b}{ОПИСАНИЕ
+РАБОТЫ 4}
+
+\protect\hyperlink{_Toc113799261}{Пошаговое описание выполненной работы
+4}
+
+\protect\hyperlink{_Toc113799262}{Строки компиляции и запуска программы
+5}
+
+\protect\hyperlink{_Toc113799263}{Результат измерения времени работы
+программы 6}
+
+\protect\hyperlink{_Toc113799264}{Заключение 7}
+
+\protect\hyperlink{ux43fux440ux438ux43bux43eux436ux435ux43dux438ux435-1-ux43fux43eux43bux43dux44bux439-ux43bux438ux441ux442ux438ux43dux433-ux43fux440ux43eux433ux440ux430ux43cux43cux44b}{Приложение
+1 (Полный листинг программы) 8}
+
+ЦЕЛЬ
+
+\begin{itemize}
+\item
+  \begin{quote}
+  \emph{Изучение методики измерения времени работы подпрограммы;}
+  \end{quote}
+\item
+  \begin{quote}
+  \emph{Изучение приемов повышения точности измерения времени работы
+  подпрограммы;}
+  \end{quote}
+\item
+  \begin{quote}
+  \emph{Изучение способов измерения времени работы подпрограммы;}
+  \end{quote}
+\item
+  \begin{quote}
+  \emph{Измерение времени работы подпрограммы в прикладной программе;}
+  \end{quote}
+\end{itemize}
+
+ЗАДАНИЕ
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \emph{Написать программу на языке C или C++, которая реализует
+  алгоритм вычисления числа Пи метом Монте-Карло. Алгоритм состоит в
+  следующем. Сначала в квадрат с центром в начале координат и со
+  стороной два вписывается круг с единичным радиусом. Затем в этом
+  квадрате случайным образом с равномерным распределением генерируются N
+  точек. Точка может попасть в окружность или нет (условие попадания x2
+  + y 2 ≤ 1). Далее определяется число M точек, попавших в круг. При
+  достаточно большом числе бросков N, по значениям M и N вычисляется
+  число Пи:}
+\end{enumerate}
+
+\[\pi \approx \frac{4M}{N}\]
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\item
+  \emph{Проверить правильность работы программы на нескольких тестовых
+  наборах входных данных;}
+\item
+  \emph{Выбрать значение параметра N таким, чтобы время работы программы
+  было порядка 15 секунд;}
+\item
+  \emph{По приведенной методике определить время работы подпрограммы
+  тестовой программы с относительной погрешностью не более 1\%.}
+\end{enumerate}
+
+ОПИСАНИЕ РАБОТЫ
+
+\protect\hypertarget{_Toc113799261}{}{}\textbf{Пошаговое описание
+выполненной работы}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  \emph{Выбрал значение параметра N таким, чтобы время работы программы
+  было порядка 15 секунд. Время программы измерял с помощью утилиты
+  \textbf{time}.}
+  \end{quote}
+\end{enumerate}
+
+\includegraphics[width=6.46944in,height=5.97222in]{img/image1.png}Сборка
+и запуск программы с утилитой time
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\item
+  \begin{quote}
+  \emph{С помощью команды \textbf{top} оценил степень загрузки
+  процессора другими процессами. Степень загрузки оказался невысокой,
+  поэтому использовать таймер времени процесса нет необходимости.}
+  \end{quote}
+\end{enumerate}
+
+\includegraphics[width=6.42986in,height=1.70347in]{img/image2.png}Результат
+команды top
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\item
+  \begin{quote}
+  \emph{Использование счетчика тактов процессора не имеет смысл, потому
+  что интервал времени больше кванта времени, выделяемого процессу
+  операционной системой.}
+  \end{quote}
+\item
+  \begin{quote}
+  \emph{Оценил относительную точность таймера системного времени. Зная,
+  что абсолютная точность \textbf{clockˍgettime} равна 1 наносекунд и
+  общее время работы программы - 15 секунд, получил относительную
+  точность равную ≈ 6.7×}\(10^{- 9}\) \emph{\%. Таким образом,
+  использование таймера системного времени обеспечивает нужную точность
+  вычисления.}
+  \end{quote}
+\item
+  \begin{quote}
+  \emph{Перед запуском программы с измерением системного времени
+  выполнил команду \textbf{sync}, чтобы сгрузить накопленные в буфере
+  отложенной записи данные на диск.}
+  \end{quote}
+\end{enumerate}
+
+\protect\hypertarget{_Toc113799262}{}{}\textbf{Строки компиляции и
+запуска программы}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+Команды для компиляции и запуска программы с измерением системного
+времени \\
+\midrule
+\endhead
+evmpu@comrade:\textasciitilde/21211/s.petrov1/lab1\$ cmake -B bin -S src
+-DCMAKE\_BUILD\_TYPE=Release -DSYS\_TIME=true
+
+evmpu@comrade:\textasciitilde/21211/s.petrov1/lab1\$ cmake ---build bin
+
+evmpu@comrade:\textasciitilde/21211/s.petrov1/lab1\$ bin/lab1 \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+Команды для компиляции и запуска программы с измерением времени
+процесса \\
+\midrule
+\endhead
+evmpu@comrade:\textasciitilde/21211/s.petrov1/lab1\$ cmake -B bin -S src
+-DCMAKE\_BUILD\_TYPE=Release -DPROC\_TIME=true
+
+evmpu@comrade:\textasciitilde/21211/s.petrov1/lab1\$ cmake ---build bin
+
+evmpu@comrade:\textasciitilde/21211/s.petrov1/lab1\$ bin/lab1 \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+Команды для компиляции и запуска программы с измерением времени
+счётчиком тактов процессора \\
+\midrule
+\endhead
+evmpu@comrade:\textasciitilde/21211/s.petrov1/lab1\$ cmake -B bin -S src
+-DCMAKE\_BUILD\_TYPE=Release -DCPU\_TIME\_STAMP\_COUNTER=true
+
+evmpu@comrade:\textasciitilde/21211/s.petrov1/lab1\$ cmake ---build bin
+
+evmpu@comrade:\textasciitilde/21211/s.petrov1/lab1\$ bin/lab1 \\
+\bottomrule
+\end{longtable}
+
+\protect\hypertarget{_Toc113799263}{}{}\textbf{Результат измерения
+времени работы программы}
+
+\begin{longtable}[]{@{}l@{}}
+\toprule
+\endhead
+\includegraphics[width=6.49653in,height=5.32153in]{img/image3.jpg}Результат
+измерения системного времени \\
+\bottomrule
+\end{longtable}
+
+Заключение
+
+\emph{В ходе выполнения лабораторной работы были изучены:}
+
+\begin{itemize}
+\item
+  \emph{Методики измерения времени работы подпрограммы;}
+\item
+  \emph{Приемы повышения точности измерения времени работы
+  подпрограммы;}
+\item
+  \emph{Способы измерения времени работы подпрограммы.}
+\end{itemize}
+
+\emph{По результатам проведённых исследований можно сделать следующие
+выводы:}
+
+\begin{itemize}
+\item
+  \emph{Выбор того или иного метода измерения времени программы зависит
+  от требуемой абсолютной и/или относительной точности, длины временного
+  интервала, степени загрузки процессора другими процессами;}
+\item
+  \emph{Важно знать способы увеличения точности и обращать внимание на
+  влияние следующих факторов: стадии инициализации и завершения
+  программы и ситуации, когда во время работы программы операционная
+  система решит сгрузить накопленные в буфере отложенной записи данные
+  на диск.}
+\end{itemize}
+
+Приложение 1 (Полный листинг программы)
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+src / main.cpp \\
+\midrule
+\endhead
+\#include \textless iostream\textgreater{}
+
+\#include "monte\_carlo.h"
+
+\#ifdef SYS\_TIME
+
+\#include \textless ctime\textgreater{}
+
+\#endif // SYS\_TIME
+
+\#ifdef PROC\_TIME
+
+\#include \textless sys/times.h\textgreater{}
+
+\#include \textless unistd.h\textgreater{}
+
+\#endif // PROC\_TIME
+
+\#ifdef CPU\_TIME\_STAMP\_COUNTER
+
+\#define CPU\_HZ 2100000000ULL
+
+\#endif // CPU\_TIME\_STAMP\_COUNTER
+
+using namespace std;
+
+int main(int argc, char **argv)
+
+\{
+
+if (argc == 1)
+
+\{
+
+cerr \textless\textless{} "No point count\textbackslash n";
+
+return EXIT\_FAILURE;
+
+\}
+
+long long count = atoll(argv{[}1{]});
+
+if (count \textless{} 0)
+
+\{
+
+cerr \textless\textless{} "Wrong point count\textbackslash n";
+
+return EXIT\_FAILURE;
+
+\}
+
+\#ifdef SYS\_TIME
+
+struct timespec sysStart, sysEnd;
+
+clock\_gettime(CLOCK\_MONOTONIC\_RAW, \&sysStart);
+
+\#endif // SYS\_TIME
+
+\#ifdef PROC\_TIME
+
+struct tms procStart, procEnd;
+
+long clocks\_per\_sec = sysconf(\_SC\_CLK\_TCK);
+
+long clocks;
+
+times(\&procStart);
+
+\#endif // PROC\_TIME
+
+\#ifdef CPU\_TIME\_STAMP\_COUNTER
+
+union
+
+\{
+
+unsigned long long t64;
+
+struct
+
+\{
+
+unsigned long th, tl;
+
+\} t32;
+
+\} tactStart, tactEnd;
+
+asm("rdtsc\textbackslash n":"=a"(tactStart.t32.th),"=d"(tactStart.t32.tl));
+
+\#endif // CPU\_TIME\_STAMP\_COUNTER
+
+double pi = MonteCarloAlgorithm(count);
+
+\#ifdef SYS\_TIME
+
+clock\_gettime(CLOCK\_MONOTONIC\_RAW, \&sysEnd);
+
+double sysTime = sysEnd.tv\_sec - sysStart.tv\_sec + 1e-9 *
+(sysEnd.tv\_nsec - sysStart.tv\_nsec);
+
+cout \textless\textless{} "System time: " \textless\textless{} sysTime
+\textless\textless{} " sec.\textbackslash n";
+
+\#endif // SYS\_TIME
+
+\#ifdef PROC\_TIME
+
+times(\&procEnd);
+
+double procTime = (double)(procEnd.tms\_utime - procStart.tms\_utime) /
+clocks\_per\_sec;
+
+cout \textless\textless{} "Process time: " \textless\textless{} procTime
+\textless\textless{} "sec.\textbackslash n";
+
+\#endif // PROC\_TIME
+
+\#ifdef CPU\_TIME\_STAMP\_COUNTER
+
+asm("rdtsc\textbackslash n":"=a"(tactEnd.t32.th),"=d"(tactEnd.t32.tl));
+
+double tactTime = (double)(tactEnd.t64 - tactStart.t64) / CPU\_HZ;
+
+cout \textless\textless{} "CPU time stamp counter: "
+\textless\textless{} tactTime \textless\textless{} "
+sec.\textbackslash n";
+
+\#endif // CPU\_TIME\_STAMP\_COUNTER
+
+cout \textless\textless{} "PI: " \textless\textless{} pi
+\textless\textless{} "\textbackslash n";
+
+return EXIT\_SUCCESS;
+
+\} \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+src / CMakeLists.txt \\
+\midrule
+\endhead
+cmake\_minimum\_required(VERSION 3.5.1)
+
+project(lab1 CXX)
+
+add\_executable(lab1 main.cpp)
+
+add\_subdirectory(monte\_carlo)
+
+target\_include\_directories(lab1 PUBLIC monte\_carlo)
+
+target\_link\_libraries(lab1 PUBLIC monte\_carlo)
+
+if(SYS\_TIME)
+
+message(STATUS "Macro SYS\_TIME installed")
+
+target\_compile\_definitions (lab1 PUBLIC SYS\_TIME)
+
+find\_library(LIBRT rt)
+
+if(LIBRT)
+
+message(STATUS "Library rt installed")
+
+target\_link\_libraries(lab1 PUBLIC \$\{LIBRT\})
+
+else()
+
+message(STATUS "Library rt skipped")
+
+endif()
+
+endif()
+
+if(PROC\_TIME)
+
+message(STATUS "Macro PROC\_TIME installed")
+
+target\_compile\_definitions (lab1 PUBLIC PROC\_TIME)
+
+endif()
+
+if(CPU\_TIME\_STAMP\_COUNTER)
+
+message(STATUS "Macro CPU\_TIME\_STAMP\_COUNTER installed")
+
+target\_compile\_definitions (lab1 PUBLIC CPU\_TIME\_STAMP\_COUNTER)
+
+endif() \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+src / monteˍcarlo / monteˍcarlo.cpp \\
+\midrule
+\endhead
+\#include "monte\_carlo.h"
+
+double MonteCarloAlgorithm(long long count)
+
+\{
+
+InitRand();
+
+double insideCount = 0.0;
+
+for (long long i = 0; i \textless{} count; ++i)
+
+\{
+
+Point a;
+
+if (a.InsideCircle())
+
+\{
+
+insideCount += 4.0;
+
+\}
+
+\}
+
+return insideCount / count;
+
+\} \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+src / monteˍcarlo / monteˍcarlo.h \\
+\midrule
+\endhead
+\#ifndef MONTE\_CARLO\_H
+
+\#define MONTE\_CARLO\_H
+
+\#include "point.h"
+
+\#include "random.h"
+
+double MonteCarloAlgorithm(long long);
+
+\#endif // MONTE\_CARLO\_H \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+src / monteˍcarlo / CMakeLists.txt \\
+\midrule
+\endhead
+add\_library(monte\_carlo STATIC monte\_carlo.cpp)
+
+target\_include\_directories(monte\_carlo PUBLIC point)
+
+add\_subdirectory(point)
+
+target\_link\_libraries(monte\_carlo PUBLIC point) \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+src / monteˍcarlo / point / point.cpp \\
+\midrule
+\endhead
+\#include "point.h"
+
+Point::Point()
+
+\{
+
+x = GenerateRand();
+
+y = GenerateRand();
+
+\}
+
+bool Point::InsideCircle()
+
+\{
+
+return (x * x) + (y * y) \textless= 1.0;
+
+\} \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+src / monteˍcarlo / point / point.h \\
+\midrule
+\endhead
+\#ifndef POINT\_H
+
+\#define POINT\_H
+
+\#include "random.h"
+
+class Point
+
+\{
+
+public:
+
+Point();
+
+bool InsideCircle();
+
+private:
+
+double x, y;
+
+\};
+
+\#endif // POINT\_H \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+src / monteˍcarlo / point / CMakeLists.txt \\
+\midrule
+\endhead
+add\_library(point STATIC point.cpp)
+
+target\_include\_directories(point PUBLIC random)
+
+add\_subdirectory(random)
+
+target\_link\_libraries(point PUBLIC random) \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+src / monteˍcarlo / point / random / random.cpp \\
+\midrule
+\endhead
+\#include "random.h"
+
+void InitRand()
+
+\{
+
+srand(time(NULL));
+
+\}
+
+double GenerateRand()
+
+\{
+
+return (double)rand() / RAND\_MAX;
+
+\} \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.00}}@{}}
+\toprule
+src / monteˍcarlo / point / random / random.h \\
+\midrule
+\endhead
+\#ifndef RANDOM\_H
+
+\#define RANDOM\_H
+
+\#include \textless cstdlib\textgreater{}
+
+\#include \textless ctime\textgreater{}
+
+void InitRand();
+
+double GenerateRand();
+
+\#endif // RANDOM\_H \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}l@{}}
+\toprule
+src / monteˍcarlo / point / random / CMakeLists.txt \\
+\midrule
+\endhead
+add\_library(random STATIC random.cpp) \\
+\bottomrule
+\end{longtable}
+
+\end{document}
