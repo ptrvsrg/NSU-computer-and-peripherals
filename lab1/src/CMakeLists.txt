@@ -3,15 +3,21 @@ project(lab1 CXX)
 
 add_executable(lab1 main.cpp)
 
-target_include_directories(lab1 PUBLIC monte_carlo)
-
 add_subdirectory(monte_carlo)
-
+target_include_directories(lab1 PUBLIC monte_carlo)
 target_link_libraries(lab1 PUBLIC monte_carlo)
 
 if(SYS_TIME)
     message(STATUS "Macro SYS_TIME installed")
     target_compile_definitions (lab1 PUBLIC SYS_TIME)
+    
+    find_library(LIBRT rt)                                                                                                                                                                                                                                                                                        
+    if(LIBRT)
+        message(STATUS "Library rt installed")
+        target_link_libraries(lab1 PUBLIC ${LIBRT})
+    else()
+        message(STATUS "Library rt skipped")
+    endif()
 endif()
 
 if(PROC_TIME)
