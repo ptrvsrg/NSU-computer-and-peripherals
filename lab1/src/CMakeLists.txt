@@ -3,23 +3,29 @@ project(lab1 CXX)
 
 add_executable(lab1 main.cpp)
 
-target_include_directories(lab1 PUBLIC monte_carlo)
-
 add_subdirectory(monte_carlo)
-
+target_include_directories(lab1 PUBLIC monte_carlo)
 target_link_libraries(lab1 PUBLIC monte_carlo)
 
-if(USE_CLOCK_GETTIME)
-    message(STATUS "Macro USE_CLOCK_GETTIME installed")
-    target_compile_definitions (lab1 PUBLIC USE_CLOCK_GETTIME)
+if(SYS_TIME)
+    message(STATUS "Macro SYS_TIME installed")
+    target_compile_definitions (lab1 PUBLIC SYS_TIME)
+    
+    find_library(LIBRT rt)                                                                                                                                                                                                                                                                                        
+    if(LIBRT)
+        message(STATUS "Library rt installed")
+        target_link_libraries(lab1 PUBLIC ${LIBRT})
+    else()
+        message(STATUS "Library rt skipped")
+    endif()
 endif()
 
-if(USE_TIMES)
-    message(STATUS "Macro USE_TIMES installed")
-    target_compile_definitions (lab1 PUBLIC USE_TIMES)
+if(PROC_TIME)
+    message(STATUS "Macro PROC_TIME installed")
+    target_compile_definitions (lab1 PUBLIC PROC_TIME)
 endif()
 
-if(USE_RDTSC)
-    message(STATUS "Macro USE_RDTSC installed")
-    target_compile_definitions (lab1 PUBLIC USE_RDTSC)
+if(CPU_TIME_STAMP_COUNTER)
+    message(STATUS "Macro CPU_TIME_STAMP_COUNTER installed")
+    target_compile_definitions (lab1 PUBLIC CPU_TIME_STAMP_COUNTER)
 endif()
