@@ -59,19 +59,19 @@ int main(int argc, char **argv)
 #ifdef SYS_TIME
     clock_gettime(CLOCK_MONOTONIC_RAW, &sysEnd);
     double sysTime = sysEnd.tv_sec - sysStart.tv_sec + 1e-9 * (sysEnd.tv_nsec - sysStart.tv_nsec);
-    cout << "System time: " << setprecision(9) << sysTime << " sec.\n";
+    cout << "System time: " << sysTime << " sec.\n";
 #endif // SYS_TIME
 
 #ifdef PROC_TIME
     times(&procEnd);
     double procTime = (double)(procEnd.tms_utime - procStart.tms_utime) / clocks_per_sec;
-    cout << "Process time: " << setprecision(2) << procTime << "sec.\n";
+    cout << "Process time: " << procTime << "sec.\n";
 #endif // PROC_TIME
 
 #ifdef CPU_TIME_STAMP_COUNTER
     asm("rdtsc\n":"=a"(tactEnd.t32.th),"=d"(tactEnd.t32.tl));
     double tactTime = (double)(tactEnd.t64 - tactStart.t64) / CPU_HZ;
-    cout << "CPU time stamp counter: " << setprecision(9) << tactTime << " sec.\n";
+    cout << "CPU time stamp counter: " << tactTime << " sec.\n";
 #endif // CPU_TIME_STAMP_COUNTER
 
     cout << "PI: " << pi << "\n";
