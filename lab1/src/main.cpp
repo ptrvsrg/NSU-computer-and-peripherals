@@ -1,9 +1,9 @@
 #include <iostream>
 #include "monte_carlo.h"
 
-#ifdef SYS_TYME
+#ifdef SYS_TIME
     #include <ctime>
-#endif // SYS_TYME
+#endif // SYS_TIME
 
 #ifdef PROC_TIME
     #include <sys/times.h>
@@ -32,10 +32,10 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-#ifdef SYS_TYME
+#ifdef SYS_TIME
     struct timespec sysStart, sysEnd;
     clock_gettime(CLOCK_MONOTONIC_RAW, &sysStart);
-#endif // SYS_TYME
+#endif // SYS_TIME
 
 #ifdef PROC_TIME
     struct tms procStart, procEnd;
@@ -56,22 +56,22 @@ int main(int argc, char **argv)
 
     double pi = MonteCarloAlgorithm(count);
 
-#ifdef SYS_TYME
-    clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+#ifdef SYS_TIME
+    clock_gettime(CLOCK_MONOTONIC_RAW, &sysEnd);
     double sysTime = sysEnd.tv_sec - sysStart.tv_sec + 1e-9 * (sysEnd.tv_nsec - sysStart.tv_nsec);
-    cout << "System time: " << sysTime << " sec.\n";
-#endif // SYS_TYME
+    cout << "System time: " << setprecision(9) << sysTime << " sec.\n";
+#endif // SYS_TIME
 
 #ifdef PROC_TIME
     times(&procEnd);
     double procTime = (double)(procEnd.tms_utime - procStart.tms_utime) / clocks_per_sec;
-    cout << "Process time: " << procTime << "sec.\n";
+    cout << "Process time: " << setprecision(2) << procTime << "sec.\n";
 #endif // PROC_TIME
 
 #ifdef CPU_TIME_STAMP_COUNTER
     asm("rdtsc\n":"=a"(tactEnd.t32.th),"=d"(tactEnd.t32.tl));
     double tactTime = (double)(tactEnd.t64 - tactStart.t64) / CPU_HZ;
-    cout << "CPU time stamp counter: " << tactTime << " sec.\n";
+    cout << "CPU time stamp counter: " << setprecision(9) << tactTime << " sec.\n";
 #endif // CPU_TIME_STAMP_COUNTER
 
     cout << "PI: " << pi << "\n";
