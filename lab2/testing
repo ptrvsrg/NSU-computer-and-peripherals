@@ -1,22 +1,28 @@
 #!/bin/bash
 
+function build {
+    rm -r bin_$1 2> /dev/null
+    mkdir bin_$1
+    cmake -B bin_$1 -S src -D $1=true
+    cmake --build bin_$1
+}
+
 function test {
-    rm -r bin 2> /dev/null
-
-    mkdir bin
-    cmake -B bin -S src -D $1=true > bin/CMakeBuildOutput.txt
-    cmake --build bin >> bin/CMakeBuildOutput.txt
-
     sync
-    bin/lab2 $2
+    bin_$1/lab2 $2
 }
 
 for OptLevel in O0 O1 O2 O3 Os Ofast Og
 do
-    for (( i=1; i <= 10; i++ ))
+    build $OptLevel
+done
+
+for (( i=0; i <= 5; i++ ))
+do
+    for OptLevel in O0 O1 O2 O3 Os Ofast Og
     do
-        echo "Run test with parameters:" $OptLevel $i"00000000"
-        test $OptLevel $(( 100000000 * $i ))
+        echo "Run test with parameters:" $OptLevel $(( 1000000000 + 200000000 * $i ))
+        test $OptLevel $(( 1000000000 + 200000000 * $i ))
         echo
     done
 done
