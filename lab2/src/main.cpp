@@ -1,5 +1,7 @@
 #include <iostream>
-#include <ctime>
+#include <sys/times.h>
+#include <unistd.h>
+
 #include "monte_carlo.h"
 
 using namespace std;
@@ -20,14 +22,16 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    struct timespec sysStart, sysEnd;
-    clock_gettime(CLOCK_MONOTONIC_RAW, &sysStart);
+    struct tms procStart, procEnd;
+    long clocks_per_sec = sysconf(_SC_CLK_TCK);
+    long clocks;
+    times(&procStart);
 
     double pi = MonteCarloAlgorithm(count);
 
-    clock_gettime(CLOCK_MONOTONIC_RAW, &sysEnd);
-    double sysTime = sysEnd.tv_sec - sysStart.tv_sec + 1e-9 * (sysEnd.tv_nsec - sysStart.tv_nsec);
-    cout << "System time: " << sysTime << " sec.\n";
+    times(&procEnd);
+    double procTime = (double)(procEnd.tms_utime - procStart.tms_utime) / clocks_per_sec;
+    cout << "Process time: " << procTime << "sec.\n";
 
     cout << "PI: " << pi << "\n";
 
