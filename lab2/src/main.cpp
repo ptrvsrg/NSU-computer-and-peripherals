@@ -1,16 +1,13 @@
 #include <iostream>
-#include <sys/times.h>
-#include <unistd.h>
+#include <ctime>
 
 #include "monte_carlo.h"
-
-using namespace std;
 
 int main(int argc, char **argv)
 {
     if (argc == 1)
     {
-        cerr << "No point count\n";
+        std::cerr << "No point count\n";
         return EXIT_FAILURE;
     }
     
@@ -18,22 +15,20 @@ int main(int argc, char **argv)
 
     if (count < 0)
     {
-        cerr << "Wrong point count\n";
+        std::cerr << "Wrong point count\n";
         return EXIT_FAILURE;
     }
 
-    struct tms procStart, procEnd;
-    long clocks_per_sec = sysconf(_SC_CLK_TCK);
-    long clocks;
-    times(&procStart);
+    struct timespec sysStart, sysEnd;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &sysStart);
 
     double pi = MonteCarloAlgorithm(count);
 
-    times(&procEnd);
-    double procTime = (double)(procEnd.tms_utime - procStart.tms_utime) / clocks_per_sec;
-    cout << "Process time: " << procTime << "sec.\n";
+    clock_gettime(CLOCK_MONOTONIC_RAW, &sysEnd);
+    double sysTime = sysEnd.tv_sec - sysStart.tv_sec + 1e-9 * (sysEnd.tv_nsec - sysStart.tv_nsec);
+    std::cout << "System time: " << sysTime << " sec.\n";
 
-    cout << "PI: " << pi << "\n";
+    std::cout << "PI: " << pi << "\n";
 
     return EXIT_SUCCESS;
 }
