@@ -4,12 +4,12 @@
 #include <stdbool.h>
 #include "random.h"
 
-typedef struct Point
+typedef struct
 {
     double x, y;
-} Point;
+} TPoint;
 
-Point InitPoint(void);
-bool InsideCircle(Point point);
+TPoint InitPoint(void);
+bool InsideCircle(TPoint point);
 
 #endif // POINT_H

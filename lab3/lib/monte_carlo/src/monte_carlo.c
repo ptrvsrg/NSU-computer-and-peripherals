@@ -7,8 +7,8 @@ double MonteCarloAlgorithm(long long count)
     double insideCount = 0.0;
     for (long long i = 0; i < count; ++i)
     {
-        Point a = InitPoint();
-        if (InsideCircle(a))
+        TPoint point = InitPoint();
+        if (InsideCircle(point))
         {
             insideCount += 4.0;
         }

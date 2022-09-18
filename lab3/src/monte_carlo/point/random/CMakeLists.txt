@@ -1,1 +1,0 @@
-add_library(random STATIC random.c)

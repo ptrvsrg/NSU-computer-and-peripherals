@@ -1,8 +1,8 @@
 #include "point.h"
 
-Point InitPoint()
+TPoint InitPoint(void)
 {
-    Point point = {
+    TPoint point = {
         .x = GenerateRand(),
         .y = GenerateRand()
     };
@@ -10,7 +10,7 @@ Point InitPoint()
     return point;
 }
 
-bool InsideCircle(Point point)
+bool InsideCircle(TPoint point)
 {
     return (point.x * point.x) + (point.y * point.y) <= 1.0;
 }

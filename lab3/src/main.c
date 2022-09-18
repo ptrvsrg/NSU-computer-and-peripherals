@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "monte_carlo.h"
 
 int main(int argc, char **argv)
@@ -9,7 +10,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "No point count\n");
         return EXIT_FAILURE;
     }
-    
+
     long long count = atoll(argv[1]);
 
     if (count < 0)
