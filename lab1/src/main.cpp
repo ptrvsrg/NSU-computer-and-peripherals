@@ -1,5 +1,4 @@
 #include <iostream>
-#include "monte_carlo.h"
 
 #ifdef SYS_TIME
     #include <ctime>
@@ -15,6 +14,25 @@
 #endif // CPU_TIME_STAMP_COUNTER
 
 using namespace std;
+
+double MonteCarloAlgorithm(long long count)
+{
+    srand(time(NULL));
+
+    double insideCount = 0.0;
+    for (long long i = 0; i < count; ++i)
+    {
+        double x = (double)rand() / RAND_MAX;
+        double y = (double)rand() / RAND_MAX;
+
+        if ((x * x) + (y * y) <= 1.0)
+        {
+            insideCount += 4.0;
+        }
+    }
+
+    return insideCount / count;
+}
 
 int main(int argc, char **argv)
 {
