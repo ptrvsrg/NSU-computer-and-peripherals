@@ -1,12 +1,6 @@
 cmake_minimum_required(VERSION 3.16.3)
 
 set(CMAKE_CXX_COMPILER "/usr/bin/g++")
-set(CMAKE_CXX_STANDARD 17)
-set(PROJECT_NAME lab2)
-set(SOURCE_DIR src)
-set(SOURCE ${SOURCE_DIR}/main.cpp)
-set(LIBRARY_DIR lib)
-set(LIBRARY monte_carlo point random)
 
 if(O0)
     message(STATUS "Flags -O0 included")
@@ -43,20 +37,14 @@ if(Og)
     set(CMAKE_CXX_FLAGS "-Og")
 endif()
 
-project(${PROJECT_NAME} CXX)
+project(lab2 CXX)
 
-add_executable(${PROJECT_NAME} ${SOURCE})
-
-foreach(LIBRARY ${LIBRARY})
-    add_subdirectory("${LIBRARY_DIR}/${LIBRARY}")
-endforeach(LIBRARY)
+add_executable(lab2 main.cpp)
 
 find_library(LIBRT rt)
 if(LIBRT)
     message(STATUS "Library rt installed")
-    string(APPEND LIBRARY ";${LIBRT}")
+    target_link_libraries(lab2 ${LIBRT})
 else()
     message(STATUS "Library rt skipped")
 endif()
-
-target_link_libraries(${PROJECT_NAME} ${LIBRARY})
