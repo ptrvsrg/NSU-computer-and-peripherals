@@ -2,7 +2,6 @@
 
 function build {
     rm -r bin_$1 2> /dev/null
-    mkdir bin_$1
     cmake -B bin_$1 -S src -D $1=true
     cmake --build bin_$1
 }
