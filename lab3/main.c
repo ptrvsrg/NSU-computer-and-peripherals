@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-double MonteCarloAlgorithm(long long count)
+double MonteCarloAlgorithm(int count)
 {
+    double insideCount = 0.0;
     srand(time(NULL));
 
-    double insideCount = 0.0;
-    for (long long i = 0; i < count; ++i)
+    for (int i = 0; i < count; ++i)
     {
         double x = (double)rand() / RAND_MAX;
         double y = (double)rand() / RAND_MAX;
@@ -21,21 +21,9 @@ double MonteCarloAlgorithm(long long count)
     return insideCount / count;
 }
 
-int main(int argc, char **argv)
+int main()
 {
-    if (argc == 1)
-    {
-        fprintf(stderr, "No point count\n");
-        return EXIT_FAILURE;
-    }
-    
-    long long count = atoll(argv[1]);
-
-    if (count < 0)
-    {
-        fprintf(stderr, "Wrong point count\n");
-        return EXIT_FAILURE;
-    }
+    unsigned int count = 100000000;
 
     double pi = MonteCarloAlgorithm(count);
     printf("PI: %lf\n", pi);
