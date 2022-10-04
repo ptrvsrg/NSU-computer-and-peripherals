@@ -23,7 +23,7 @@ double MonteCarloAlgorithm(int count)
 
 int main()
 {
-    unsigned int count = 100000000;
+    int count = 100000000;
 
     double pi = MonteCarloAlgorithm(count);
     printf("PI: %lf\n", pi);
