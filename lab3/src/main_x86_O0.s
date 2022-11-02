@@ -2,7 +2,7 @@ MonteCarloAlgorithm:
         pushl   %ebp                   // добавить адрес возврата в стек
         movl    %esp, %ebp             // запомнить адрес текущего кадра стека
         subl    $56, %esp              // зарезервировать 56 байт для локальных переменных
-        subl    $12, %esp              // зарезервировать ещё 12 байт для выполнения srand(time(NULL));
+        subl    $12, %esp              // зарезервировать ещё 12 байт
         pushl   $0                     // добавить в стек NULL для time
         call    time                   // вызов time
         addl    $16, %esp              //
@@ -66,14 +66,14 @@ main:
         subl    $12, %esp              // отступить 12 байтов от локальных переменных
         pushl   -12(%ebp)              // добавить в стек count, как аргумент для вызова MonteCarloAlgorithm
         call    MonteCarloAlgorithm    // вызов MonteCarloAlgorithm
-        addl    $16, %esp              // вернуть 16 байт, использованные при вызове MonteCarloAlgorithm
+        addl    $16, %esp              // вернуть 16 байт
         fstpl   -24(%ebp)              // извлечь вершину st(0) в стек (результат MonteCarloAlgorithm)
         subl    $4, %esp               // отступить 4 байтов от локальных переменных
         pushl   -20(%ebp)              //
         pushl   -24(%ebp)              // добавить в стек pi, как второй аргумент для вызова printf 
         pushl   $.LC5                  // добавить в стек строку из метки .LC5, как первый аргумент для вызова printf 
         call    printf                 // вызов printf
-        addl    $16, %esp              // вернуть 16 байт, использованные при вызове printf
+        addl    $16, %esp              // вернуть 16 байт
         movl    $0, %eax               // копировать в eax 0 (код завершения функции main)
         movl    -4(%ebp), %ecx         // копировать в ecx -4(%ebp)
         leave                          // сбросить кадр стека

@@ -67,7 +67,7 @@ main:
         fstpl   4(%esp)                // извлечь вершину st(0) (результат MonteCarloAlgorithm) в стек до вершины, как второй аргумент для вызова printf 
         call    printf                 // вызов printf
         movl    -4(%ebp), %ecx         // копировать в ecx -4(%ebp)
-        addl    $16, %esp              // вернуть 16 байт, использованные при вызове printf         
+        addl    $16, %esp              // вернуть 16 байт        
         xorl    %eax, %eax             // обнулить eax (код завершения функции main)
         leave                          // сбросить кадр стека
         leal    -4(%ecx), %esp         // вычислить эффективный адрес -4(%ecx) и поместить в esp
