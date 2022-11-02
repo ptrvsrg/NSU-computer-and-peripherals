@@ -8,7 +8,7 @@ using namespace std;
 using namespace cv;
 
 string xml_path = "/home/acer/NSU_Computer_And_Peripherals/lab5/config/haarcascade_frontalface_alt2.xml";
-string window_name = "Face detecting";
+string window_name = "Web camera";
 string trackbar_name = "Brightness";
 Mat frame;
 
@@ -77,25 +77,25 @@ int main()
     while (true)
     {
         ++fps_counter;
-
         input_time.Start();
-        video_capture >> frame; // Get video frame
-        if (frame.empty()) break;
+        video_capture >> frame;
+        if (getWindowProperty(window_name, WND_PROP_AUTOSIZE) == -1 ||
+            frame.empty()) break;
         input_time.Finish();
 
         process_time.Start();
         flip(frame,
              frame,
-             1);    // Flip horizontally
+             1);
 
-        ChangeBrightness(); // Change brightness
+        ChangeBrightness();
 
-        DetectAndHighlightFaces(face_cascade); // Face detecting
+        DetectAndHighlightFaces(face_cascade);
         process_time.Finish();
 
         output_time.Start();
         imshow(window_name,
-               frame); // Show window
+               frame);
         output_time.Finish();
 
         if (waitKey(1) == ESC) break;
@@ -109,13 +109,10 @@ int main()
 
 void DetectAndHighlightFaces(CascadeClassifier face_cascade)
 {
-    // Detect faces
     std::vector<Rect> faces;
     face_cascade.detectMultiScale(frame,
                                   faces);
 
-
-    // Draw circles on the detected faces
     for (auto & face : faces)
     {
         Point center(int(face.x + face.width * 0.5),
@@ -137,7 +134,7 @@ void ChangeBrightness()
     frame.convertTo(frame,
                     -1,
                     1,
-                    (brightness - 100) * 255 / 100);
+                    double(brightness - 100) * 255 / 100);
 }
 
 void PrintInfo(int fps_counter)
