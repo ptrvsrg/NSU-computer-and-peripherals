@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project(lab6 C)
 
 add_executable(lab6
-        main.c)
+        src/main.c)
 
 find_path(LIBUSB_INCLUDE_DIR
         NAMES libusb.h)
