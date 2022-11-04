@@ -62,7 +62,8 @@ void PrintDeviceParams(libusb_device * device)
     struct libusb_device_descriptor descriptor;
 
     // get device descriptor
-    int status = libusb_get_device_descriptor(device, &descriptor);
+    int status = libusb_get_device_descriptor(device,
+                                              &descriptor);
     if (status != 0)
     {
         fprintf(stderr,
@@ -75,7 +76,8 @@ void PrintDeviceParams(libusb_device * device)
     struct libusb_device_handle * handle;
 
     // open device and get device handle
-    status = libusb_open(device, &handle);
+    status = libusb_open(device,
+                         &handle);
     if (status != 0)
     {
         fprintf(stderr,
@@ -103,7 +105,7 @@ void PrintDeviceParams(libusb_device * device)
     // close device handle
     libusb_close(handle);
 
-    printf("%-20d 0x%-18.4x 0x%-18.4x %-20s\n",
+    printf("%-20.2x 0x%-18.4x 0x%-18.4x %-20s\n",
            (int)descriptor.bDeviceClass,
            descriptor.idVendor,
            descriptor.idProduct,
