@@ -1,14 +1,14 @@
-cmake_minimum_required(VERSION 3.22.1)
+cmake_minimum_required(VERSION 3.16.3)
 
 project(lab6 C)
 
 add_executable(lab6
         src/main.c)
 
-find_path(LIBUSB_INCLUDE_DIR
-        NAMES libusb.h)
-find_library(LIBUSB_LIBRARY
-        NAMES usb-1.0)
+find_package(PkgConfig)
+pkg_check_modules(libusb-1.0 REQUIRED libusb-1.0)
 
-target_include_directories(lab6 PUBLIC ${LIBUSB_INCLUDE_DIR})
-target_link_libraries(lab6 PUBLIC ${LIBUSB_LIBRARY})
+target_include_directories(lab6 PUBLIC
+        ${libusb-1.0_INCLUDE_DIRS})
+target_link_libraries(lab6 PUBLIC
+        ${libusb-1.0_LIBRARIES})
