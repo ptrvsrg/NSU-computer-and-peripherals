@@ -22,8 +22,8 @@ MonteCarloAlgorithm:
         adr     r3, .L8                 // загрузить константу из .L8 (RAND_MAX) в r3
         ldr     r2, [r3]                // загрузить RAND_MAX в r2
         bl      __aeabi_ddiv            // (double)rand() / RAND_MAX
-        mov     r2, r0                  // поместить младшую часть в r2 
-        mov     r3, r1                  // поместить старшую часть в r3 
+        mov     r2, r0                  
+        mov     r3, r1                  // поместить результат в r2, r3  
         strd    r2, [r7, #16]           // поместить младшую и старшую часть в стек (создание x)
         bl      rand                    // вызов rand
         mov     r3, r0                  
@@ -32,11 +32,11 @@ MonteCarloAlgorithm:
         adr     r3, .L8                 // загрузить константу из .L8 (RAND_MAX) в r3
         ldr     r2, [r3]                // загрузить RAND_MAX в r2
         bl      __aeabi_ddiv            // (double)rand() / RAND_MAX
-        mov     r2, r0                  // поместить младшую часть в r2 
-        mov     r3, r1                  // поместить старшую часть в r3 
+        mov     r2, r0                  
+        mov     r3, r1                  // поместить результат в r2, r3 
         strd    r2, [r7, #8]            // поместить младшую и старшую часть в стек (создание y)
-        ldrd    r2, [r7, #16]           // загрузить х в r2
-        ldrd    r0, [r7, #16]           // загрузить х в r0
+        ldrd    r2, [r7, #16]           // загрузить х в r2, r3
+        ldrd    r0, [r7, #16]           // загрузить х в r0, r1
         bl      __aeabi_dmul            // х * х
         mov     r2, r0                  
         mov     r3, r1                  // сохранить результат вызова в r2 и r3
@@ -101,13 +101,13 @@ main:
         sub     sp, sp, #16             // выделить 16 байт для локальных переменных
         add     r7, sp, #0              // записать в r7 sp+0 (аналог ebp)
         mov     r3, #57600              // создать count
-        movt    r3, 1525                // r1 = 57600 | (1525 << 16) = 100000000
-        str     r3, [r7, #12]           // записать count в стек
+        movt    r3, 1525                // r1 = 57600 | (1525 << 16) = 100000000 (t = top 16 bit)
+        str     r3, [r7, #12]           // записать count в стек (r = register)
         ldr     r0, [r7, #12]           // загрузить count в r0 (аргумент функции MonteCarloAlgorithm)
-        bl      MonteCarloAlgorithm     // вызвать MonteCarloAlgorithm
-        strd    r0, [r7]                // записать в стек результат MonteCarloAlgorithm (создание pi)
+        bl      MonteCarloAlgorithm     // вызвать MonteCarloAlgorithm (l = link)
+        strd    r0, [r7]                // записать в стек результат MonteCarloAlgorithm (создание pi) (d = double)
         ldrd    r2, [r7]                // загрузить pi (второй аргумент printf)
-        movw    r0, #:lower16:.LC0
+        movw    r0, #:lower16:.LC0      // w = word (16 bit)
         movt    r0, #:upper16:.LC0      // поместить указатель на строку из метки .LC0 в r0 (первый аргумент printf)
         bl      printf                  // вызов printf
         movs    r3, #0                  // обнулить r3

@@ -53,7 +53,7 @@ MonteCarloAlgorithm:
         mov     r4, r0                  // переписать результат х*х + у*у <= 1.0 в r4
         movs    r2, #0                  // обнулить r2
         ldrd    r0, [sp]                // загрузить insideCount в r0, r1
-        cbz     r4, .L3                 // перейти к метке .L3, если результат х*х + у*у <= 1.0 равен 0
+        cbz     r4, .L3                 // перейти к метке .L3, если результат сравнения х*х + у*у <= 1.0 равен 0
         bl      __aeabi_dadd            // insideCount + 4.0
         strd    r0, [sp]                // записать insideCount + 4.0 в стек
 .L3:
