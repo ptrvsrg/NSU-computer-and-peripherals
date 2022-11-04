@@ -12,10 +12,16 @@ string window_name = "Web camera";
 string trackbar_name = "Brightness";
 Mat frame;
 
+// detect and highlight faces
 void DetectAndHighlightFaces(CascadeClassifier face_cascade);
+
+// change brightness
 void ChangeBrightness();
+
+// print information about fps and times
 void PrintInfo(int fps_counter);
 
+// class for measuring time
 class Clock
 {
 public:
@@ -49,21 +55,26 @@ private:
 
 int main()
 {
-    VideoCapture video_capture(0); // Open a capturing device
+    // Open a capturing device
+    VideoCapture video_capture(0);
     if (!video_capture.isOpened())
     {
         cerr << "VideoCapture error" << endl;
         return EXIT_FAILURE;
     }
 
-    CascadeClassifier face_cascade(xml_path); // Load face cascade
+    // Load face cascade
+    CascadeClassifier face_cascade(xml_path);
     if (face_cascade.empty())
     {
         cerr << "CascadeClassifier error" << endl;
         return EXIT_FAILURE;
     }
 
+    // create window
     namedWindow(window_name);
+
+    // create trackbar
     createTrackbar(trackbar_name,
                    window_name,
                    nullptr,
@@ -78,12 +89,15 @@ int main()
     {
         ++fps_counter;
         input_time.Start();
+        // get frame
         video_capture >> frame;
+        // check that frame is empty and window is closed
         if (getWindowProperty(window_name, WND_PROP_AUTOSIZE) == -1 ||
             frame.empty()) break;
         input_time.Finish();
 
         process_time.Start();
+        // mirror the frame horizontally
         flip(frame,
              frame,
              1);
@@ -94,10 +108,12 @@ int main()
         process_time.Finish();
 
         output_time.Start();
+        // display frame in window
         imshow(window_name,
                frame);
         output_time.Finish();
 
+        // wait for pressed key ESC
         if (waitKey(1) == ESC) break;
     }
     program_time.Finish();
@@ -109,10 +125,12 @@ int main()
 
 void DetectAndHighlightFaces(CascadeClassifier face_cascade)
 {
+    // detect faces in frame
     std::vector<Rect> faces;
     face_cascade.detectMultiScale(frame,
                                   faces);
 
+    // draw ellipse around faces
     for (auto & face : faces)
     {
         Point center(int(face.x + face.width * 0.5),
@@ -123,14 +141,18 @@ void DetectAndHighlightFaces(CascadeClassifier face_cascade)
                 0,
                 0,
                 360,
-                Scalar(255, 255, 255));
+                Scalar(255, 255, 255),
+                3);
     }
 }
 
 void ChangeBrightness()
 {
+    // get brightness value from trackbar
     int brightness = getTrackbarPos(trackbar_name,
                                    window_name);
+
+    // change frame brightness
     frame.convertTo(frame,
                     -1,
                     1,
