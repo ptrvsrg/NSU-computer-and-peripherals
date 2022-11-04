@@ -2,4 +2,4 @@
 */bin_*
 .vscode
 */.idea
-*/cmake-build-debug
+*/cmake-build*
