@@ -1,12 +1,10 @@
+#include <cfloat>       // FLT_MIN
 #include <cmath>        // fabs()
 #include <ctime>
 #include <iostream>
-#include <cfloat>       // FLT_MIN
 
-#define N 2048
+#define N 4096
 #define M 10
-
-using namespace std;
 
 void Inverse(const float * matrix,
              float * result);
@@ -29,15 +27,24 @@ void Print(const float * matrix);
 
 int main()
 {
-    srand(time(nullptr));
+    srandom(time(nullptr));
     auto * matrix = new float [N * N];
     auto * result = new float [N * N];
 
     for (int i = 0; i < N * N; ++i)
     {
-        matrix[i] = rand() % 10;
+        matrix[i] = float(random());
+        matrix[i] *= (random() % 2) ? 1 : -1;
         result[i] = 0;
     }
+
+//    float matrix[N * N] = {
+//        3, 0, 9, 0,
+//        3, 4, 8, 1,
+//        2, 4, 6, 2,
+//        6, 2, 2, 6
+//    };
+//    float result[N * N] = { 0 };
 
     timespec start = {
         0,
@@ -49,6 +56,11 @@ int main()
     Inverse(matrix,
             result);
 
+//    Print(matrix);
+//    cout << endl;
+//    Print(result);
+//    cout << endl;
+
     timespec end = {
         0,
         0
@@ -56,15 +68,15 @@ int main()
     clock_gettime(CLOCK_MONOTONIC_RAW,
                   &end);
 
-    cout << "Time without vectorization: "
+    std::cout << "Time without vectorization: "
          << (double)end.tv_sec - (double)start.tv_sec + 1e-9 * ((double)end.tv_nsec - (double)start.tv_nsec)
-         << " sec." << endl;
+         << " sec." << std::endl;
 
     return EXIT_SUCCESS;
 }
 
 void Inverse(const float * matrix,
-                    float * result)
+             float * result)
 {
     auto * B = new float[N * N];
     FillB(matrix, B);
@@ -96,6 +108,7 @@ void Inverse(const float * matrix,
                  tmp);
         flag = !flag;
     }
+
     Multiplication(tmp,
                    B,
                    result);
@@ -118,8 +131,8 @@ float GetMaxSum(const float * matrix)
 
         for (int j = 0; j < N; j++) // columns
         {
-            sum_row += fabs(matrix[N * i + j]);
-            sum_column += fabs(matrix[j * N + i]);
+            sum_row += std::fabs(matrix[N * i + j]);
+            sum_column += std::fabs(matrix[j * N + i]);
         }
 
         if (sum_row > max_sum_row)          max_sum_row = sum_row;
@@ -148,42 +161,39 @@ void FillI(float * I)
 }
 
 void Multiplication(const float * multiplier1,
-                           const float * multiplier2,
-                           float * result)
+                    const float * multiplier2,
+                    float * result)
 {
+    for (int i = 0; i < N * N; ++i)
+        result[i] = 0;
+
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < N; ++j)
             for (int k = 0; k < N; ++k)
-            {
-                if (k == 0) result[N * i + j] = 0;
-                result[N * i + j] += multiplier1[N * i + k] * multiplier2[N * k + j];
-            }
+                result[N * i + k] += multiplier1[N * i + j] * multiplier2[N * j + k];
 }
 
 void Addition(const float * addend1,
-                     const float * addend2,
-                     float * result)
+              const float * addend2,
+              float * result)
 {
-    for (int i = 0; i < N; i++)
-        for (int j = 0; j < N; j++)
-            result[N * i + j] = addend1[N * i + j] + addend2[N * i + j];
+    for (int i = 0; i < N * N; ++i)
+        result[i] = addend1[i] + addend2[i];
 }
 
 void Subtraction(const float * minuend,
-                        const float * subtrahend,
-                        float * result)
+                 const float * subtrahend,
+                 float * result)
 {
-    for (int i = 0; i < N; i++)
-        for (int j = 0; j < N; j++)
-            result[N * i + j] = minuend[N * i + j] - subtrahend[N * i + j];
+    for (int i = 0; i < N * N; i++)
+        result[i] = minuend[i] - subtrahend[i];
 }
 
 void Copy(float * dest,
           const float * src)
 {
-    for (int i = 0; i < N; i++)
-        for (int j = 0; j < N; j++)
-            dest[N * i + j] = src[N * i + j];
+    for (int i = 0; i < N * N; i++)
+        dest[i] = src[i];
 }
 
 void Print(const float * matrix)
@@ -191,10 +201,8 @@ void Print(const float * matrix)
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < N; j++)
-        {
-            cout << matrix[N * i + j] << " ";
-        }
+            std::cout << matrix[N * i + j] << " ";
 
-        cout << endl;
+        std::cout << std::endl;
     }
 }
