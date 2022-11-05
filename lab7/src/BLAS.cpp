@@ -4,7 +4,7 @@
 #include <iostream>
 #include <mkl_cblas.h>  // cblas_sgemm
 
-#define N 4096
+#define N 2048
 #define M 10
 
 using namespace std;
@@ -99,7 +99,9 @@ void Inverse(const float * matrix,
     Addition(I,
              R,
              tmp);
-    Copy(result, R);
+    Copy(result,
+         R);
+
     bool flag = true;
     for (int i = 2; i < M; ++i)
     {

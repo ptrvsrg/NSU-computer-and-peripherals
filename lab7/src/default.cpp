@@ -3,7 +3,7 @@
 #include <ctime>
 #include <iostream>
 
-#define N 4096
+#define N 2048
 #define M 10
 
 void Inverse(const float * matrix,
@@ -96,7 +96,9 @@ void Inverse(const float * matrix,
     Addition(I,
              R,
              tmp);
-    Copy(result, R);
+    Copy(result,
+         R);
+
     bool flag = true;
     for (int i = 2; i < M; ++i)
     {
@@ -143,7 +145,7 @@ float GetMaxSum(const float * matrix)
 }
 
 void FillB(const float * matrix,
-                  float * B)
+           float * B)
 {
     float max = GetMaxSum(matrix);
 
@@ -157,7 +159,6 @@ void FillI(float * I)
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < N; ++j)
             I[N * i + j] = (float)(i == j);
-
 }
 
 void Multiplication(const float * multiplier1,

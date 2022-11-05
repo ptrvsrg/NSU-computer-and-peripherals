@@ -1,9 +1,9 @@
 #include <cfloat>      // FLOAT_MIN
 #include <ctime>
 #include <iostream>
-#include <immintrin.h>
+#include <xmmintrin.h>
 
-#define N 4096
+#define N 2048
 #define M 10
 
 void Inverse(const float * matrix,
@@ -96,7 +96,9 @@ void Inverse(const float * matrix,
     Addition(I,
              R,
              tmp);
-    Copy(result, R);
+    Copy(result,
+         R);
+
     bool flag = true;
     for (int i = 2; i < M; ++i)
     {
