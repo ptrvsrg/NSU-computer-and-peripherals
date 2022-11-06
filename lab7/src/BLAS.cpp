@@ -24,7 +24,7 @@ void Subtraction(const float * minuend,
                  float * result);
 void Copy(float * dest,
           const float * src);
-void Print(const float * matrix);
+//void Print(const float * matrix);
 
 int main()
 {
@@ -204,13 +204,13 @@ void Copy(float * dest,
         dest[i] = src[i];
 }
 
-void Print(const float * matrix)
-{
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++)
-            std::cout << matrix[N * i + j] << " ";
-
-        std::cout << std::endl;
-    }
-}
+//void Print(const float * matrix)
+//{
+//    for (int i = 0; i < N; i++)
+//    {
+//        for (int j = 0; j < N; j++)
+//            std::cout << matrix[N * i + j] << " ";
+//
+//        std::cout << std::endl;
+//    }
+//}

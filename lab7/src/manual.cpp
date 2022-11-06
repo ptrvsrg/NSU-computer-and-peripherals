@@ -23,7 +23,7 @@ void Subtraction(const float * minuend,
                  float * result);
 void Copy(float * dest,
           const float * src);
-void Print(const float * matrix);
+//void Print(const float * matrix);
 
 int main()
 {
@@ -62,9 +62,9 @@ int main()
                   &end);
 
 //    Print(matrix);
-//    cout << endl;
+//    std::cout << std::endl;
 //    Print(result);
-//    cout << endl;
+//    std::cout << std::endl;
 
     std::cout << "Time with manual vectorization: "
          << (double)end.tv_sec - (double)start.tv_sec + 1e-9 * ((double)end.tv_nsec - (double)start.tv_nsec)
@@ -269,21 +269,17 @@ void Subtraction(const float * minuend,
 void Copy(float * dest,
           const float * src)
 {
-    const __m128 * m128_src;
-    m128_src = (const __m128 *)src;
-
-    for (int i = 0; i < N / 4; i++)
-        _mm_store_ps(dest + 4 * i,
-                     m128_src[i]);
+    for (int i = 0; i < N * N; i++)
+        dest[i] = src[i];
 }
 
-void Print(const float * matrix)
-{
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++)
-            std::cout << matrix[N * i + j] << " ";
-
-        std::cout << std::endl;
-    }
-}
+//void Print(const float * matrix)
+//{
+//    for (int i = 0; i < N; i++)
+//    {
+//        for (int j = 0; j < N; j++)
+//            std::cout << matrix[N * i + j] << " ";
+//
+//        std::cout << std::endl;
+//    }
+//}
