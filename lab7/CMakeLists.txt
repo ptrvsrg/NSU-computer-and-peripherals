@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.16.3)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -msse -msse2 -msse3")
-
 project(lab7)
 
 add_executable(default
@@ -9,6 +7,9 @@ add_executable(default
 
 add_executable(manual
         src/manual.cpp)
+
+target_compile_options(manual PUBLIC
+        -msse3)
 
 add_executable(BLAS
         src/BLAS.cpp)
