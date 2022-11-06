@@ -30,6 +30,14 @@ int main()
     srandom(time(nullptr));
     auto * matrix = new float [N * N];
     auto * result = new float [N * N];
+    timespec start = {
+        0,
+        0
+    };
+    timespec end = {
+        0,
+        0
+    };
 
     for (int i = 0; i < N * N; ++i)
     {
@@ -46,27 +54,17 @@ int main()
 //    };
 //    float result[N * N] = { 0 };
 
-    timespec start = {
-        0,
-        0
-    };
     clock_gettime(CLOCK_MONOTONIC_RAW,
                   &start);
-
     Inverse(matrix,
             result);
+    clock_gettime(CLOCK_MONOTONIC_RAW,
+                  &end);
 
 //    Print(matrix);
 //    cout << endl;
 //    Print(result);
 //    cout << endl;
-
-    timespec end = {
-        0,
-        0
-    };
-    clock_gettime(CLOCK_MONOTONIC_RAW,
-                  &end);
 
     std::cout << "Time with manual vectorization: "
          << (double)end.tv_sec - (double)start.tv_sec + 1e-9 * ((double)end.tv_nsec - (double)start.tv_nsec)
@@ -79,27 +77,25 @@ void Inverse(const float * matrix,
              float * result)
 {
     auto * B = new float[N * N];
-    FillB(matrix, B);
-
     auto * I = new float[N * N];
-    FillI(I);
-
     auto * tmp = new float[N * N];
     auto * R = new float[N * N];
+    bool flag = true;
+
+    FillB(matrix, B);
+    FillI(I);
     Multiplication(B,
                    matrix,
                    tmp);
     Subtraction(I,
                 tmp,
                 R);
-
     Addition(I,
              R,
              tmp);
     Copy(result,
          R);
 
-    bool flag = true;
     for (int i = 2; i < M; ++i)
     {
         Multiplication(flag ? result : I,
@@ -131,19 +127,26 @@ float GetMaxSum(const float * matrix)
 {
     float max_sum_row = FLT_MIN;
     float max_sum_column = FLT_MIN;
+    __m128 m128_row;
+    __m128 m128_column;
+    __m128 m128_sum_row;
+    __m128 m128_sum_column;
+    float m32_sum[4];
+    float sum_row;
+    float sum_column;
 
     for (int i = 0; i < N; ++i)
     {
-        __m128 m128_sum_row = _mm_setzero_ps();
-        __m128 m128_sum_column = _mm_setzero_ps();
+        m128_sum_row = _mm_setzero_ps();
+        m128_sum_column = _mm_setzero_ps();
 
         for (int j = 0; j < N / 4; ++j)
         {
-            __m128 m128_row = _mm_load_ps(matrix + N * i + 4 * j);
-            __m128 m128_column = _mm_setr_ps(matrix[N * j + i],
-                                             matrix[N * (j + 1) + i],
-                                             matrix[N * (j + 2) + i],
-                                             matrix[N * (j + 3) + i]);
+            m128_row = _mm_load_ps(matrix + N * i + 4 * j);
+            m128_column = _mm_setr_ps(matrix[N * j + i],
+                                      matrix[N * (j + 1) + i],
+                                      matrix[N * (j + 2) + i],
+                                      matrix[N * (j + 3) + i]);
             m128_row = mm_abs_ps(m128_row);
             m128_column = mm_abs_ps(m128_column);
 
@@ -153,15 +156,13 @@ float GetMaxSum(const float * matrix)
                                          m128_column);
         }
 
-        float m32_sum[4];
-
         _mm_store_ps(m32_sum,
                      m128_sum_row);
-        float sum_row = m32_sum[0] + m32_sum[1] + m32_sum[2] + m32_sum[3];
+        sum_row = m32_sum[0] + m32_sum[1] + m32_sum[2] + m32_sum[3];
 
         _mm_store_ps(m32_sum,
                      m128_sum_column);
-        float sum_column = m32_sum[0] + m32_sum[1] + m32_sum[2] + m32_sum[3];
+        sum_column = m32_sum[0] + m32_sum[1] + m32_sum[2] + m32_sum[3];
 
         if (sum_row > max_sum_row)          max_sum_row = sum_row;
         if (sum_column > max_sum_column)    max_sum_column = sum_column;
@@ -177,14 +178,15 @@ void FillB(const float * matrix,
     __m128 m128_max = _mm_set1_ps(max);
     __m128 * m128_B;
     m128_B = (__m128 *)B;
+    __m128 m128_matrix_column;
 
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < N / 4; ++j)
         {
-            __m128 m128_matrix_column = _mm_setr_ps(matrix[N * j + i],
-                                                    matrix[N * (j + 1) + i],
-                                                    matrix[N * (j + 2) + i],
-                                                    matrix[N * (j + 3) + i]);
+            m128_matrix_column = _mm_setr_ps(matrix[N * j + i],
+                                             matrix[N * (j + 1) + i],
+                                             matrix[N * (j + 2) + i],
+                                             matrix[N * (j + 3) + i]);
 
             m128_B[N * i / 4 + j] = _mm_div_ps(m128_matrix_column,
                                                m128_max);
@@ -212,6 +214,8 @@ void Multiplication(const float * multiplier1,
     const __m128 * m128_multiplier2;
     m128_result = (__m128 *)result;
     m128_multiplier2 = (const __m128 *)multiplier2;
+    __m128 m128_multiplier1;
+    __m128 tmp;
 
     for (int i = 0; i < N * N / 4; ++i)
         m128_result[i] = _mm_setzero_ps();
@@ -219,11 +223,11 @@ void Multiplication(const float * multiplier1,
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < N; ++j)
         {
-            __m128 m128_multiplier1 = _mm_set1_ps(multiplier1[N * i + j]);
+            m128_multiplier1 = _mm_set1_ps(multiplier1[N * i + j]);
             for (int k = 0; k < N / 4; ++k)
             {
-                __m128 tmp = _mm_mul_ps(m128_multiplier1,
-                                        m128_multiplier2[N * j / 4 + k]);
+                tmp = _mm_mul_ps(m128_multiplier1,
+                                 m128_multiplier2[N * j / 4 + k]);
                 m128_result[N * i / 4 + k] = _mm_add_ps(m128_result[N * i / 4 + k],
                                                         tmp);
             }
