@@ -18,8 +18,11 @@ void DetectAndHighlightFaces(CascadeClassifier face_cascade);
 // change brightness
 void ChangeBrightness();
 
-// print information about fps and times
-void PrintInfo(int fps_counter);
+// print information about fps
+void PrintFPS();
+
+// print information about times
+void PrintTimes();
 
 // class for measuring time
 class Clock
@@ -27,20 +30,30 @@ class Clock
 public:
     void Start()
     {
-        clock_gettime(CLOCK_MONOTONIC_RAW, &start_);
+        clock_gettime(CLOCK_MONOTONIC_RAW,
+                      &start_);
     }
 
     void Finish()
     {
-        clock_gettime(CLOCK_MONOTONIC_RAW, &finish_);
-        total_time_ = (double)finish_.tv_sec - (double)start_.tv_sec +
+        clock_gettime(CLOCK_MONOTONIC_RAW,
+                      &finish_);
+
+        interval_time_ = (double)finish_.tv_sec - (double)start_.tv_sec +
             1e-9 * ((double)finish_.tv_nsec - (double)start_.tv_nsec);
+        total_time_ += interval_time_;
+    }
+
+    double GetIntervalTime() const
+    {
+        return interval_time_;
     }
 
     double GetTotalTime() const
     {
         return total_time_;
     }
+
 private:
     timespec start_ = {
         0,
@@ -50,8 +63,9 @@ private:
         0,
         0
     };
-    double total_time_ = 0;
-} input_time, process_time, output_time, program_time;
+    double interval_time_ = 0.0;
+    double total_time_ = 0.0;
+} input_time, process_time, output_time;
 
 int main()
 {
@@ -83,17 +97,15 @@ int main()
                    window_name,
                    100);
 
-    int fps_counter = 0;
-    program_time.Start();
     while (true)
     {
-        ++fps_counter;
         input_time.Start();
         // get frame
         video_capture >> frame;
         // check that frame is empty and window is closed
-        if (getWindowProperty(window_name, WND_PROP_AUTOSIZE) == -1 ||
-            frame.empty()) break;
+        if (frame.empty() ||
+            getWindowProperty(window_name,
+                              WND_PROP_AUTOSIZE) == -1) break;
         input_time.Finish();
 
         process_time.Start();
@@ -113,12 +125,13 @@ int main()
                frame);
         output_time.Finish();
 
+        PrintFPS();
+
         // wait for pressed key ESC
         if (waitKey(1) == ESC) break;
     }
-    program_time.Finish();
 
-    PrintInfo(fps_counter);
+    PrintTimes();
 
     return 0;
 }
@@ -159,10 +172,16 @@ void ChangeBrightness()
                     double(brightness - 100) * 255 / 100);
 }
 
-void PrintInfo(int fps_counter)
+void PrintFPS()
+{
+    double time = input_time.GetIntervalTime() +
+        process_time.GetIntervalTime() + output_time.GetIntervalTime();
+    cout << "FPS: " << 1.0 / time << endl;
+}
+
+void PrintTimes()
 {
     double time = input_time.GetTotalTime() + process_time.GetTotalTime() + output_time.GetTotalTime();
-    cout << "FPS: " << fps_counter / program_time.GetTotalTime() << endl;
     cout << "Input time: "      << 100.0 * input_time.GetTotalTime() / time << "%" << endl;
     cout << "Process time: "    << 100.0 * process_time.GetTotalTime() / time << "%" << endl;
     cout << "Output time: "     << 100.0 * output_time.GetTotalTime() / time << "%" << endl;
