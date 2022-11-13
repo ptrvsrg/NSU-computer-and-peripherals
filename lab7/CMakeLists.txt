@@ -11,13 +11,16 @@ add_executable(manual
 target_compile_options(manual PUBLIC
         -msse3)
 
-add_executable(BLAS
-        src/BLAS.cpp)
 
-find_package(MKL CONFIG REQUIRED)
-target_compile_options(BLAS PUBLIC
-        $<TARGET_PROPERTY:MKL::MKL,INTERFACE_COMPILE_OPTIONS>)
-target_include_directories(BLAS PUBLIC
-        $<TARGET_PROPERTY:MKL::MKL,INTERFACE_INCLUDE_DIRECTORIES>)
-target_link_libraries(BLAS PUBLIC
-        $<LINK_ONLY:MKL::MKL>)
+find_package(MKL CONFIG)
+if (${MKL_FOUND})
+    message(STATUS "MKL found")
+    add_executable(BLAS
+            src/BLAS.cpp)
+    target_compile_options(BLAS PUBLIC
+            $<TARGET_PROPERTY:MKL::MKL,INTERFACE_COMPILE_OPTIONS>)
+    target_include_directories(BLAS PUBLIC
+            $<TARGET_PROPERTY:MKL::MKL,INTERFACE_INCLUDE_DIRECTORIES>)
+    target_link_libraries(BLAS PUBLIC
+            $<LINK_ONLY:MKL::MKL>)
+endif()
