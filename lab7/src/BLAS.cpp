@@ -24,13 +24,14 @@ void Subtraction(const float * minuend,
                  float * result);
 void Copy(float * dest,
           const float * src);
-//void Print(const float * matrix);
+float Sum(const float * matrix);
 
 int main()
 {
     srandom(time(nullptr));
     auto * matrix = new float [N * N];
     auto * result = new float [N * N];
+    auto * check = new float [N * N];
     timespec start = {
         0,
         0
@@ -47,29 +48,25 @@ int main()
         result[i] = 0;
     }
 
-//    float matrix[N * N] = {
-//        3, 0, 9, 0,
-//        3, 4, 8, 1,
-//        2, 4, 6, 2,
-//        6, 2, 2, 6
-//    };
-//    float result[N * N] = { 0 };
-
-
     clock_gettime(CLOCK_MONOTONIC_RAW,
                   &start);
     Inverse(matrix,
             result);
     clock_gettime(CLOCK_MONOTONIC_RAW,
                   &end);
-//    Print(matrix);
-//    cout << endl;
-//    Print(result);
-//    cout << endl;
 
-    std::cout << "Time with BLAS: "
-         << (double)end.tv_sec - (double)start.tv_sec + 1e-9 * ((double)end.tv_nsec - (double)start.tv_nsec)
-         << " sec." << std::endl;
+    Multiplication(matrix,
+                   result,
+                   check);
+
+    std::cout << "Sum of A*A^(-1) elements: " << Sum(check) << std::endl;
+    std::cout << "Time without vectorization: "
+              << (double)end.tv_sec - (double)start.tv_sec + 1e-9 * ((double)end.tv_nsec - (double)start.tv_nsec)
+              << " sec." << std::endl;
+
+    delete []matrix;
+    delete []result;
+    delete []check;
 
     return EXIT_SUCCESS;
 }
@@ -91,7 +88,6 @@ void Inverse(const float * matrix,
     Subtraction(I,
                 tmp,
                 R);
-
     Addition(I,
              R,
              tmp);
@@ -204,13 +200,13 @@ void Copy(float * dest,
         dest[i] = src[i];
 }
 
-//void Print(const float * matrix)
-//{
-//    for (int i = 0; i < N; i++)
-//    {
-//        for (int j = 0; j < N; j++)
-//            std::cout << matrix[N * i + j] << " ";
-//
-//        std::cout << std::endl;
-//    }
-//}
+float Sum(const float * matrix)
+{
+    float sum = 0.0;
+    for (int i = 0; i < N * N; ++i)
+    {
+        sum += matrix[i];
+    }
+
+    return sum;
+}
