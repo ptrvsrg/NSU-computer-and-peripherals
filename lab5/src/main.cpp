@@ -71,19 +71,9 @@ int main()
 {
     // Open a capturing device
     VideoCapture video_capture(0);
-    if (!video_capture.isOpened())
-    {
-        cerr << "VideoCapture error" << endl;
-        return EXIT_FAILURE;
-    }
 
     // Load face cascade
     CascadeClassifier face_cascade(xml_path);
-    if (face_cascade.empty())
-    {
-        cerr << "CascadeClassifier error" << endl;
-        return EXIT_FAILURE;
-    }
 
     // create window
     namedWindow(window_name);
@@ -97,92 +87,89 @@ int main()
                    window_name,
                    100);
 
+    Mat frame;
+    long long start,
+        interval,
+        input_time = 0,
+        process_time = 0,
+        output_time = 0,
+        frame_time;
+    long long frame_count = 0;
     while (true)
     {
-        input_time.Start();
+        start = getTickCount();
         // get frame
-        video_capture >> frame;
+        video_capture.read(frame);
         // check that frame is empty and window is closed
-        if (frame.empty() ||
-            getWindowProperty(window_name,
-                              WND_PROP_AUTOSIZE) == -1) break;
-        input_time.Finish();
+        if (frame.empty()) break;
+        ++frame_count;
+        interval = getTickCount() - start;
 
-        process_time.Start();
+        frame_time = interval;
+        input_time += interval;
+
+        start = getTickCount();
         // mirror the frame horizontally
         flip(frame,
              frame,
              1);
 
-        ChangeBrightness();
+        // get brightness value from trackbar
+        int brightness = getTrackbarPos(trackbar_name,
+                                        window_name);
+        // change frame brightness
+        frame.convertTo(frame,
+                        -1,
+                        1,
+                        double(brightness - 100) * 255 / 100);
+        // detect faces in frame
+        std::vector<Rect> faces;
+        face_cascade.detectMultiScale(frame,
+                                      faces);
+        // draw ellipse around faces
+        for (auto & face : faces)
+        {
+            Point center(int(face.x + face.width * 0.5),
+                         int(face.y + face.height * 0.5));
+            ellipse(frame,
+                    center,
+                    Size(int(face.width * 0.5), int(face.height * 0.5)),
+                    0,
+                    0,
+                    360,
+                    Scalar(255, 255, 255),
+                    3);
+        }
+        interval = getTickCount() - start;
 
-        DetectAndHighlightFaces(face_cascade);
-        process_time.Finish();
+        frame_time += interval;
+        process_time += interval;
 
-        output_time.Start();
+        start = getTickCount();
         // display frame in window
         imshow(window_name,
                frame);
-        output_time.Finish();
-
-        PrintFPS();
-
-        // wait for pressed key ESC
+        // wait for pressed key ESC or closed window
         if (waitKey(1) == ESC) break;
+        if (getWindowProperty(window_name,
+                              WND_PROP_AUTOSIZE) == -1) break;
+        interval = getTickCount() - start;
+
+        frame_time += interval;
+        output_time += interval;
+
+        // print FPS
+        cout << frame_count << ") FPS: " << 1.0 * getTickFrequency() / double(frame_time) << endl;
     }
 
-    PrintTimes();
+    long long total_time = input_time + process_time + output_time;
+    cout << "Average FPS: " << double(frame_count) * getTickFrequency() / double(total_time) << endl;
+    cout << "Input time: " << double(input_time) / getTickFrequency()
+         << " (" << 100.0 * double(input_time) / double(total_time) << "%)" << endl;
+    cout << "Process time: " << double(process_time) / getTickFrequency()
+         << " (" << 100.0 * double(process_time) / double(total_time) << "%)" << endl;
+    cout << "Output time: " << double(output_time) / getTickFrequency()
+         << " (" << 100.0 * double(output_time) / double(total_time) << "%)" << endl;
 
-    return 0;
-}
-
-void DetectAndHighlightFaces(CascadeClassifier face_cascade)
-{
-    // detect faces in frame
-    std::vector<Rect> faces;
-    face_cascade.detectMultiScale(frame,
-                                  faces);
-
-    // draw ellipse around faces
-    for (auto & face : faces)
-    {
-        Point center(int(face.x + face.width * 0.5),
-                     int(face.y + face.height * 0.5));
-        ellipse(frame,
-                center,
-                Size(int(face.width * 0.5), int(face.height * 0.5)),
-                0,
-                0,
-                360,
-                Scalar(255, 255, 255),
-                3);
-    }
-}
-
-void ChangeBrightness()
-{
-    // get brightness value from trackbar
-    int brightness = getTrackbarPos(trackbar_name,
-                                   window_name);
-
-    // change frame brightness
-    frame.convertTo(frame,
-                    -1,
-                    1,
-                    double(brightness - 100) * 255 / 100);
-}
-
-void PrintFPS()
-{
-    double time = input_time.GetIntervalTime() +
-        process_time.GetIntervalTime() + output_time.GetIntervalTime();
-    cout << "FPS: " << 1.0 / time << endl;
-}
-
-void PrintTimes()
-{
-    double time = input_time.GetTotalTime() + process_time.GetTotalTime() + output_time.GetTotalTime();
-    cout << "Input time: "      << 100.0 * input_time.GetTotalTime() / time << "%" << endl;
-    cout << "Process time: "    << 100.0 * process_time.GetTotalTime() / time << "%" << endl;
-    cout << "Output time: "     << 100.0 * output_time.GetTotalTime() / time << "%" << endl;
+    return EXIT_SUCCESS;
 }
