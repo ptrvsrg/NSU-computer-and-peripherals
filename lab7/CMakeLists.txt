@@ -9,7 +9,10 @@ add_executable(manual
         src/manual.cpp)
 
 target_compile_options(manual PUBLIC
-        -msse3)
+        -msse
+        -msse2
+        -msse3
+        -msse4)
 
 
 find_package(MKL CONFIG)
