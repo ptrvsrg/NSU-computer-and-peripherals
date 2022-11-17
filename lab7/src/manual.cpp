@@ -1,5 +1,5 @@
 #include <cfloat>       // FLT_MIN
-#include <cmath>        // fabs
+#include <cmath>        // fabs()
 #include <ctime>
 #include <iostream>
 #include <xmmintrin.h>
@@ -60,7 +60,7 @@ int main()
 //                   check);
 //
 //    std::cout << "AbsSum of A*A^(-1) elements: " << AbsSum(check) << std::endl;
-    std::cout << "Time without vectorization: "
+    std::cout << "Time with vectorization: "
               << (double)end.tv_sec - (double)start.tv_sec + 1e-9 * ((double)end.tv_nsec - (double)start.tv_nsec)
               << " sec." << std::endl;
 
@@ -80,7 +80,8 @@ void Inverse(const float * matrix,
     auto * R = new float[N * N];
     bool flag = true;
 
-    FillB(matrix, B);
+    FillB(matrix,
+          B);
     FillI(I);
     Multiplication(B,
                    matrix,
@@ -212,9 +213,7 @@ void Copy(float * dest,
 //{
 //    float abs_sum = 0.0;
 //    for (int i = 0; i < N * N; ++i)
-//    {
 //        abs_sum += std::abs(matrix[i]);
-//    }
 //
 //    return abs_sum;
 //}

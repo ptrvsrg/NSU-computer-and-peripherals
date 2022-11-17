@@ -79,7 +79,8 @@ void Inverse(const float * matrix,
     auto * R = new float[N * N];
     bool flag = true;
 
-    FillB(matrix, B);
+    FillB(matrix,
+          B);
     FillI(I);
     Multiplication(B,
                    matrix,
@@ -196,9 +197,7 @@ void Copy(float * dest,
 //{
 //    float abs_sum = 0.0;
 //    for (int i = 0; i < N * N; ++i)
-//    {
 //        abs_sum += std::abs(matrix[i]);
-//    }
 //
 //    return abs_sum;
 //}

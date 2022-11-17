@@ -14,7 +14,6 @@ target_compile_options(manual PUBLIC
         -msse3
         -msse4)
 
-
 find_package(MKL CONFIG)
 if (${MKL_FOUND})
     message(STATUS "MKL found")
