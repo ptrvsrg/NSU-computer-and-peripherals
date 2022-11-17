@@ -1,5 +1,5 @@
 #include <cfloat>       // FLT_MIN
-#include <cmath>        // fabs()
+#include <cmath>        // fabs
 #include <ctime>
 #include <iostream>
 #include <xmmintrin.h>
@@ -24,7 +24,7 @@ void Subtraction(const float * minuend,
                  float * result);
 void Copy(float * dest,
           const float * src);
-float Sum(const float * matrix);
+//float AbsSum(const float * matrix);
 
 int main()
 {
@@ -55,11 +55,11 @@ int main()
     clock_gettime(CLOCK_MONOTONIC_RAW,
                   &end);
 
-    Multiplication(matrix,
-                   result,
-                   check);
-
-    std::cout << "Sum of A*A^(-1) elements: " << Sum(check) << std::endl;
+//    Multiplication(matrix,
+//                   result,
+//                   check);
+//
+//    std::cout << "AbsSum of A*A^(-1) elements: " << AbsSum(check) << std::endl;
     std::cout << "Time without vectorization: "
               << (double)end.tv_sec - (double)start.tv_sec + 1e-9 * ((double)end.tv_nsec - (double)start.tv_nsec)
               << " sec." << std::endl;
@@ -208,13 +208,13 @@ void Copy(float * dest,
         dest[i] = src[i];
 }
 
-float Sum(const float * matrix)
-{
-    float sum = 0.0;
-    for (int i = 0; i < N * N; ++i)
-    {
-        sum += matrix[i];
-    }
-
-    return sum;
-}
+//float AbsSum(const float * matrix)
+//{
+//    float abs_sum = 0.0;
+//    for (int i = 0; i < N * N; ++i)
+//    {
+//        abs_sum += std::abs(matrix[i]);
+//    }
+//
+//    return abs_sum;
+//}
