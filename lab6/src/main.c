@@ -56,6 +56,7 @@ int main()
 
     return EXIT_SUCCESS;
 }
+
 void PrintDeviceParams(libusb_device * device)
 {
     // device descriptor
