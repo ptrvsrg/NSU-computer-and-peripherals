@@ -8,7 +8,9 @@
 
 void Inverse(const float * matrix,
              float * result);
-float GetMaxSum(const float * matrix); // |A|_1 * |A|_infinity
+void GetNorms(float & A_1,
+              float & A_infinity,
+              const float * matrix);
 void FillB(const float * matrix,
            float * B);
 void FillI(float * I);
@@ -23,7 +25,7 @@ void Subtraction(const float * minuend,
                  float * result);
 void Copy(float * dest,
           const float * src);
-//float AbsSum(const float * matrix);
+void Print(const float * matrix);
 
 int main()
 {
@@ -54,14 +56,22 @@ int main()
     clock_gettime(CLOCK_MONOTONIC_RAW,
                   &end);
 
-//    Multiplication(matrix,
-//                   result,
-//                   check);
-//
-//    std::cout << "AbsSum of A*A^(-1) elements: " << AbsSum(check) << std::endl;
+    Multiplication(matrix,
+                   result,
+                   check);
+
+    float A_1, A_infinity;
+    GetNorms(A_1,
+             A_infinity,
+             check);
+
+    std::cout << "A_1 check: " << A_1 << std::endl;
+    std::cout << "A_infinity check: " << A_infinity << std::endl;
+//    Print(check);
+
     std::cout << "Time without vectorization: "
-         << (double)end.tv_sec - (double)start.tv_sec + 1e-9 * ((double)end.tv_nsec - (double)start.tv_nsec)
-         << " sec." << std::endl;
+              << (double)end.tv_sec - (double)start.tv_sec + 1e-9 * ((double)end.tv_nsec - (double)start.tv_nsec)
+              << " sec." << std::endl;
 
     delete []matrix;
     delete []result;
@@ -115,10 +125,12 @@ void Inverse(const float * matrix,
     delete[] R;
 }
 
-float GetMaxSum(const float * matrix)
+void GetNorms(float & A_1,
+              float & A_infinity,
+              const float * matrix)
 {
-    float max_sum_row = FLT_MIN;
-    float max_sum_column = FLT_MIN;
+    A_1 = FLT_MIN;
+    A_infinity = FLT_MIN;
     float sum_row = 0;
     float sum_column = 0;
 
@@ -133,21 +145,24 @@ float GetMaxSum(const float * matrix)
             sum_column += std::fabs(matrix[j * N + i]);
         }
 
-        if (sum_row > max_sum_row)          max_sum_row = sum_row;
-        if (sum_column > max_sum_column)    max_sum_column = sum_column;
+        if (sum_row > A_1)
+            A_1 = sum_row;
+        if (sum_column > A_infinity)
+            A_infinity = sum_column;
     }
-
-    return max_sum_row * max_sum_column;
 }
 
 void FillB(const float * matrix,
            float * B)
 {
-    float max = GetMaxSum(matrix);
+    float A_1, A_infinity;
+    GetNorms(A_1,
+             A_infinity,
+             matrix);
 
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < N; ++j)
-            B[N * i + j] = matrix[j * N + i] / max;
+            B[N * i + j] = matrix[j * N + i] / (A_1 * A_infinity);
 }
 
 void FillI(float * I)
@@ -193,11 +208,13 @@ void Copy(float * dest,
         dest[i] = src[i];
 }
 
-//float AbsSum(const float * matrix)
-//{
-//    float abs_sum = 0.0;
-//    for (int i = 0; i < N * N; ++i)
-//        abs_sum += std::abs(matrix[i]);
-//
-//    return abs_sum;
-//}
+void Print(const float * matrix)
+{
+    for (int i = 0; i < N; ++i)
+    {
+        for (int j = 0; j < N; ++j)
+            std::cout << matrix[N * i + j] << " ";
+
+        std::cout << std::endl;
+    }
+}
