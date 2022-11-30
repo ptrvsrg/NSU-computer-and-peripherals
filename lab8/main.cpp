@@ -29,11 +29,16 @@ int main()
               << std::setw(10) << std::left << "Reverse"
               << std::setw(10) << std::left << "Straight" << std::endl;
 
+    auto * array = new uint32_t[MAX_SIZE];
+    Bypass(array,
+           MAX_SIZE);
+    delete [] array;
+
     for (uint32_t size = MIN_SIZE; size <= MAX_SIZE; size *= 2)
     {
         std::cout << std::setw(10) << std::left << size * sizeof(uint32_t);
 
-        auto * array = new uint32_t[size];
+        array = new uint32_t[size];
 
         CreateRandom(array,
                      size);
