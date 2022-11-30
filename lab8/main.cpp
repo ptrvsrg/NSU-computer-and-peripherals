@@ -5,16 +5,10 @@
 #include <iostream>
 #include <set>
 
-#define CPU_HZ 2100000000ULL
+#define MIN_SIZE (1 * 1024)
+#define MAX_SIZE (2 * 1024 * 1024)
 
-union Time
-{
-    uint64_t t64;
-    struct
-    {
-        uint32_t th, tl;
-    } t32;
-};
+using Time = uint64_t;
 
 void Clock(Time & time);
 void CreateStraight(uint32_t * array,
@@ -26,8 +20,7 @@ void CreateRandom(uint32_t * array,
 uint64_t CalcTime(const uint32_t * array,
                   uint32_t size);
 void Bypass(const uint32_t * array,
-            uint32_t size,
-            uint32_t bypass_count);
+            uint32_t size);
 
 int main()
 {
@@ -36,9 +29,7 @@ int main()
               << std::setw(10) << std::left << "Reverse"
               << std::setw(10) << std::left << "Straight" << std::endl;
 
-    uint32_t size = 8 * 1024 * 1024;
-
-    for (int i = 0; i < 18; ++i)
+    for (uint32_t size = MIN_SIZE; size <= MAX_SIZE; size *= 2)
     {
         std::cout << std::setw(10) << std::left << size * sizeof(uint32_t);
 
@@ -56,7 +47,6 @@ int main()
                        size);
         std::cout << std::setw(10) << std::left << CalcTime(array, size) << std::endl;
 
-        size /= 2;
         delete [] array;
     }
 
@@ -65,7 +55,7 @@ int main()
 
 void Clock(Time & time)
 {
-    asm("rdtsc\n":"=a"(time.t32.th),"=d"(time.t32.tl));
+    asm("rdtsc\n":"=a"(time));
 }
 
 void CreateStraight(uint32_t * array,
@@ -88,7 +78,7 @@ void CreateRandom(uint32_t * array,
                   uint32_t size)
 {
     std::set<uint32_t> indexes;
-    for (uint32_t i = 0; i < size - 1; ++i) // { 1, 2, ... , size - 1 }
+    for (uint32_t i = 0; i < size - 1; ++i)
         indexes.insert(i + 1);
 
     srandom(time(nullptr));
@@ -107,24 +97,28 @@ void CreateRandom(uint32_t * array,
 }
 
 void Bypass(const uint32_t * array,
-            uint32_t size,
-            uint32_t bypass_count)
+            uint32_t size)
 {
-    for (uint32_t i = 0, k = 0; i < size * bypass_count; ++i)
+    for (uint32_t i = 0, k = 0; i < size; ++i)
         k = array[k];
 }
 
 uint64_t CalcTime(const uint32_t * array,
                   uint32_t size)
 {
+    uint64_t min = UINT64_MAX;
     Time start{}, end{};
 
-    Clock(start);
-    Bypass(array,
-           size,
-           3);
-    Clock(end);
+    for (int i = 0; i < 3; ++i)
+    {
+        Clock(start);
+        Bypass(array,
+               size);
+        Clock(end);
 
-    uint64_t res = (end.t64 - start.t64) / (size * 3);
-    return res;
+        uint64_t res = (end - start) / size;
+        min = (min < res) ? min : res;
+    }
+
+    return min;
 }
