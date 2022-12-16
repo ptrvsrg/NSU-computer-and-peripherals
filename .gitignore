@@ -1,5 +1,5 @@
-*/bin
-*/bin_*
+**/bin
+**/bin_*
 .vscode
-*/.idea
-*/cmake-build*
+**/.idea
+**/cmake-build*
