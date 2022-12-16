@@ -2,9 +2,10 @@
 #include <iomanip>
 #include <iostream>
 
-#define SIZE        (32 * 24 * 1024 * 1024 / sizeof(uint32_t))
-#define CACHE_SIZE  (12 * 1024 * 1024 / sizeof(uint32_t))
-#define OFFSET      (24 * 1024 * 1024 / sizeof(uint32_t))
+#define MAX_FRAGMENTS_COUNT 32
+#define FRAGMENT_SIZE (12 * 1024 * 1024 / sizeof(uint32_t))
+#define OFFSET (24 * 1024 * 1024 / sizeof(uint32_t))
+#define SIZE (MAX_FRAGMENTS_COUNT * OFFSET)
 
 union Time
 {
@@ -18,12 +19,12 @@ union Time
 
 void Clock(Time & time);
 uint64_t Bypass(const uint32_t * array,
-                size_t fragments,
-                size_t cache_size);
+                size_t fragments_count,
+                size_t fragment_size);
 void InitArray(uint32_t * array,
-               size_t fragments,
+               size_t fragments_count,
                size_t offset,
-               size_t cache_size);
+               size_t fragment_size);
 
 int main()
 {
@@ -34,26 +35,26 @@ int main()
               << "Tacts: " << std::endl;
 
     InitArray(array,
-              32,
+              MAX_FRAGMENTS_COUNT,
               OFFSET,
-              CACHE_SIZE);
+              FRAGMENT_SIZE);
 
     Bypass(array,
-           32,
-           CACHE_SIZE);
+           MAX_FRAGMENTS_COUNT,
+           FRAGMENT_SIZE);
 
-    for(int fragments = 1; fragments <= 32; ++fragments)
+    for(int fragments = 1; fragments <= MAX_FRAGMENTS_COUNT; ++fragments)
     {
         InitArray(array,
                   fragments,
                   OFFSET,
-                  CACHE_SIZE);
+                  FRAGMENT_SIZE);
 
         std::cout << std::left << std::setw(20)
                   << fragments
                   << Bypass(array,
                             fragments,
-                            CACHE_SIZE) << std::endl;
+                            FRAGMENT_SIZE) << std::endl;
     }
 
     delete [] array;
@@ -66,24 +67,24 @@ void Clock(Time & time)
 }
 
 void InitArray(uint32_t * array,
-               size_t fragments,
+               size_t fragments_count,
                size_t offset,
-               size_t cache_size)
+               size_t fragment_size)
 {
-    for(size_t i = 0; i < cache_size; ++i)
+    for(size_t i = 0; i < fragment_size; ++i)
     {
-        for(size_t j = 0; j < fragments; ++j)
+        for(size_t j = 0; j < fragments_count; ++j)
             array[i + j * offset] = i + (j + 1) * offset;
 
-        array[i + (fragments - 1) * offset] = i + 1;
+        array[i + (fragments_count - 1) * offset] = i + 1;
     }
 
-    array[(cache_size - 1) + (fragments - 1) * offset] = 0;
+    array[(fragment_size - 1) + (fragments_count - 1) * offset] = 0;
 }
 
 uint64_t Bypass(const uint32_t * array,
-                size_t fragments,
-                size_t cache_size)
+                size_t fragments_count,
+                size_t fragment_size)
 {
     uint64_t t_min = UINT64_MAX;
     Time start{}, end{};
@@ -92,7 +93,7 @@ uint64_t Bypass(const uint32_t * array,
     {
         Clock(start);
 
-        for (uint32_t k = 0, j = 0; j < fragments * cache_size; ++j)
+        for (uint32_t k = 0, j = 0; j < fragments_count * fragment_size; ++j)
             k = array[k];
 
         Clock(end);
@@ -101,5 +102,5 @@ uint64_t Bypass(const uint32_t * array,
             t_min = end.m64 - start.m64;
     }
 
-    return t_min / (fragments * cache_size);
+    return t_min / (fragments_count * fragment_size);
 }
