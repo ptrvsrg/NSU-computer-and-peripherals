@@ -3,7 +3,7 @@
 
 int main(int argc, char ** argv)
 {
-    if (argc < 3)
+    if (argc < 2)
     {
         fprintf(stderr, "Few args error\n");
         return EXIT_FAILURE;
@@ -16,10 +16,7 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-    int count_branches = atoi(argv[1]);
-    int offset = atoi(argv[2]);
-    if (offset < 3)
-        offset = 3;
+    int branch_count = atoi(argv[1]);
 
     // write header
     fprintf(file,
@@ -29,20 +26,14 @@ int main(int argc, char ** argv)
         "\tasm volatile (\n"
         "\t\t\"mov $10, %%eax;\\n\"\n"
         "\t\t\"cmp $15, %%eax;\\n\"\n"
+        "\t\t\".p2align 1\\n\"\n"
     );
 
-    for (int i = 0; i < count_branches; ++i)
-    {
+    for (int i = 0; i < branch_count; ++i)
         fprintf(file,
                 "\t\t\"jle label_%d;\\n\"\n"
-                "\t\t\"nop;\\n\"\n",
-                i);
-
-        for (int j = 0; j < offset - 3; ++j)
-            fprintf(file, "\t\t\"nop;\\n\"\n");
-
-        fprintf(file, "\t\t\"label_%d:\\n\"\n", i);
-    }
+                "\t\t\"label_%d:\\n\"\n",
+                i, i);
 
     // write tail
     fprintf(file,
@@ -52,6 +43,5 @@ int main(int argc, char ** argv)
     );
 
     fclose(file);
-
     return EXIT_SUCCESS;
 }
