@@ -1,0 +1,7 @@
+#!/bin/bash
+
+make > /dev/null
+echo -n "MPR: "
+sudo bin/main
+echo
+make clean > /dev/null

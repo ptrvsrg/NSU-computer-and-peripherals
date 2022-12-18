@@ -1,0 +1,16 @@
+#!/bin/bash
+
+LSpy=1
+
+while [ $LSpy -le 17 ]
+do
+  echo "LSpy: $LSpy"
+  make > /dev/null
+  echo -n "MPR: "
+  sudo bin/main $LSpy
+  echo
+  echo
+  LSpy=$(( LSpy + 1 ))
+done
+
+make clean > /dev/null
