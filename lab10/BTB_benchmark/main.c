@@ -13,7 +13,8 @@ int main()
         return EXIT_FAILURE;
     }
 
-    int events[] = {
+    int events[] =
+    {
         PAPI_BR_MSP,    // Conditional branch instructions mispredicted
         PAPI_BR_INS     // Total branch instructions executed
     };
@@ -26,7 +27,7 @@ int main()
         return EXIT_FAILURE;
     }
 
-    for (int i = 0; i < 100000; ++i)
+    for (int i = 0; i < 1000000; ++i)
         RunBranches();
 
     retval = PAPI_stop_counters(values, sizeof(values) / sizeof(*values));
@@ -36,7 +37,7 @@ int main()
         return EXIT_FAILURE;
     }
 
-    printf("Branch misses percentage: %lf\n", (double)values[0] * 100 / (double)values[1]);
+    printf("%lf", (double)values[0] * 100 / (double)values[1]);
 
     return EXIT_SUCCESS;
 }
