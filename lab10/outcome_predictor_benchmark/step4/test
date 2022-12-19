@@ -1,0 +1,13 @@
+#!/bin/bash
+
+dummy_branch_count=0
+
+while [ $dummy_branch_count -le 64 ]
+do
+  echo "Dummy branch count: $dummy_branch_count"
+  make dummy_branch_count=$dummy_branch_count> /dev/null
+  sudo perf stat -e branches,branch-misses -S bin/main $dummy_branch_count
+  dummy_branch_count=$(( dummy_branch_count + 1 ))
+done
+
+make clean > /dev/null
