@@ -1,0 +1,13 @@
+#!/bin/bash
+
+offset=2
+
+while [ $offset -le 1024 ]
+do
+  echo "Offset: $offset"
+  make branch_count=1024 offset=$offset > /dev/null
+  sudo perf stat -e branches,branch-misses bin/main
+  offset=$(( offset * 2 ))
+done
+
+make clean > /dev/null
