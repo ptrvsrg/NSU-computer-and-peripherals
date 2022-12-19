@@ -1,0 +1,20 @@
+#!/bin/bash
+
+L1=1
+L2=1
+
+make > /dev/null
+
+while [ $L1 -le 32 ]
+do
+  while [ $L2 -le 32 ]
+  do
+    bin/NOK $L1 $L2 32 && (echo "L1: $L1, L2: $L2"; sudo perf stat -e branches,branch-misses -S bin/main $L1 $L2)
+    L2=$(( L2 + 1 ))
+  done
+
+  L1=$(( L1 + 1 ))
+  L2=$L1
+done
+
+make clean > /dev/null
