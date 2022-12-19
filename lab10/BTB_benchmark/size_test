@@ -5,11 +5,8 @@ branch_count=1
 while [ $branch_count -le 16384 ]
 do
   echo "Branches count: $branch_count"
-  make branch_count=$branch_count > /dev/null
-  echo -n "MPR: "
-  sudo bin/main
-  echo
-  echo
+  make branch_count=$branch_count offset=2 > /dev/null
+  sudo perf stat -e branches,branch-misses bin/main
   branch_count=$(( branch_count * 2 ))
 done
 

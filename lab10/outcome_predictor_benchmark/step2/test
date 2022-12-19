@@ -1,7 +1,5 @@
 #!/bin/bash
 
 make > /dev/null
-echo -n "MPR: "
-sudo bin/main
-echo
+sudo perf stat -e branches,branch-misses -S bin/main
 make clean > /dev/null

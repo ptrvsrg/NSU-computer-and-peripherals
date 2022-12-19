@@ -6,10 +6,7 @@ while [ $LSpy -le 17 ]
 do
   echo "LSpy: $LSpy"
   make > /dev/null
-  echo -n "MPR: "
-  sudo bin/main $LSpy
-  echo
-  echo
+  sudo perf stat -e branches,branch-misses -S bin/main $LSpy
   LSpy=$(( LSpy + 1 ))
 done
 
