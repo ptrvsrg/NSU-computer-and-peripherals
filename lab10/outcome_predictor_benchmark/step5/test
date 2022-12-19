@@ -1,0 +1,8 @@
+#!/bin/bash
+
+L3=64
+
+echo "L3: $L3"
+make > /dev/null
+sudo perf stat -e branches,branch-misses -S bin/main $L3
+make clean > /dev/null
